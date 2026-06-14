@@ -1,0 +1,2071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>BRCC — The Regiment</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --gold: #F5A623;
+  --gold-dim: #C4831A;
+  --bg: #111111;
+  --card: #1C1C1C;
+  --card2: #242424;
+  --border: #2A2A2A;
+  --text: #FFFFFF;
+  --muted: #777777;
+  --muted2: #555555;
+  --red: #C94040;
+  --green: #4CAF50;
+  --olive: #5E6E40;
+  --blue: #4A72CC;
+}
+
+body {
+  background: #060606;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* ── PHONE SHELL ── */
+.phone {
+  width: 393px;
+  height: 852px;
+  background: var(--bg);
+  border-radius: 52px;
+  overflow: hidden;
+  position: relative;
+  box-shadow:
+    0 0 0 1px #2a2a2a,
+    0 0 0 11px #161616,
+    0 0 0 12px #333,
+    0 40px 100px rgba(0,0,0,0.9);
+}
+
+/* Dynamic island */
+.island {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 126px;
+  height: 34px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 999;
+}
+
+/* Status bar */
+.status-bar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 54px;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 28px 10px;
+  justify-content: space-between;
+  z-index: 998;
+  pointer-events: none;
+}
+.status-time {
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+  letter-spacing: -0.3px;
+}
+.status-icons {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+.status-icons .material-icons {
+  font-size: 16px;
+  color: white;
+}
+.battery-icon {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+.battery-body {
+  width: 22px;
+  height: 11px;
+  border: 1.5px solid white;
+  border-radius: 3px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 1.5px;
+}
+.battery-fill {
+  width: 75%;
+  height: 100%;
+  background: white;
+  border-radius: 1px;
+}
+.battery-tip {
+  width: 2px;
+  height: 5px;
+  background: white;
+  border-radius: 0 1px 1px 0;
+  margin-left: 1px;
+}
+
+/* ── SCREENS ── */
+.screen {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  bottom: 84px;
+  background: var(--bg);
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: none;
+  scrollbar-width: none;
+}
+.screen::-webkit-scrollbar { display: none; }
+.screen.active { display: block; }
+.screen.slide-in { animation: slide-in 0.25s cubic-bezier(0.4,0,0.2,1); }
+@keyframes slide-in {
+  from { transform: translateX(20px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+/* ── NAV BAR ── */
+.nav-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 84px;
+  background: #0D0D0D;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  padding-top: 10px;
+  z-index: 500;
+}
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  padding: 0 4px;
+  transition: opacity 0.15s;
+}
+.nav-item .material-icons {
+  font-size: 24px;
+  color: var(--muted2);
+  transition: color 0.15s;
+}
+.nav-item.active .material-icons { color: var(--gold); }
+.nav-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--muted2);
+  transition: color 0.15s;
+}
+.nav-item.active .nav-label { color: var(--gold); }
+.nav-regiment-wrap { position: relative; }
+.nav-pip {
+  position: absolute;
+  top: -3px; right: -4px;
+  width: 7px; height: 7px;
+  background: var(--gold);
+  border-radius: 50%;
+  border: 1.5px solid #0D0D0D;
+}
+
+/* ── SHARED ── */
+.mi { font-family: 'Material Icons'; font-weight: normal; font-style: normal; display: inline-flex; align-items: center; justify-content: center; line-height: 1; }
+
+.screen-header {
+  padding: 62px 20px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.screen-title {
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 20px;
+  margin-bottom: 10px;
+}
+
+.divider { height: 1px; background: var(--border); margin: 0 20px; }
+
+.progress-wrap {
+  background: #252525;
+  border-radius: 99px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-dim) 0%, var(--gold) 100%);
+  border-radius: 99px;
+  transition: width 0.9s cubic-bezier(0.4,0,0.2,1);
+}
+
+.gold-btn {
+  background: var(--gold);
+  color: #000;
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 8px;
+  padding: 15px 20px;
+  width: 100%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: opacity 0.15s;
+}
+.gold-btn:active { opacity: 0.8; }
+
+.tag {
+  display: inline-block;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 3px;
+  line-height: 1.4;
+}
+.tag-red    { background: rgba(201,64,64,0.18); color: #E06060; }
+.tag-olive  { background: rgba(94,110,64,0.25);  color: #8FAA60; }
+.tag-blue   { background: rgba(74,114,204,0.18); color: #7AABEE; }
+.tag-dark   { background: var(--card2); color: var(--muted); border: 1px solid var(--border); }
+
+/* ════════════════════════════════════
+   SCREEN: HOME
+════════════════════════════════════ */
+.home-hero {
+  background: linear-gradient(180deg, #1A1A1A 0%, var(--bg) 100%);
+  border-bottom: 1px solid var(--border);
+  /* top padding clears the 54px status bar */
+  padding: 54px 20px 20px;
+  position: relative;
+  overflow: hidden;
+}
+.home-hero::after {
+  content: '';
+  position: absolute;
+  top: -40px; right: -60px;
+  width: 220px; height: 220px;
+  background: radial-gradient(circle, rgba(245,166,35,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0 14px;
+}
+.hero-logo {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+.hero-actions {
+  display: flex;
+  gap: 2px;
+}
+.hero-icon-btn {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  border-radius: 8px;
+}
+.hero-icon-btn .material-icons {
+  font-size: 22px;
+  color: white;
+}
+.home-greeting {
+  font-size: 27px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: white;
+  line-height: 1.1;
+}
+.home-greeting em { color: var(--gold); font-style: normal; }
+
+/* Regiment widget */
+.regiment-widget {
+  margin: 14px 20px 0;
+  background: var(--card);
+  border: 1px solid rgba(245,166,35,0.5);
+  border-radius: 12px;
+  padding: 14px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.regiment-widget::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(245,166,35,0.05) 0%, transparent 55%);
+  pointer-events: none;
+}
+.rw-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.rw-badge {
+  width: 42px; height: 42px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2E2000, #1A1A1A);
+  border: 2px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 12px rgba(245,166,35,0.25);
+}
+.rw-badge .material-icons { font-size: 20px; color: var(--gold); }
+.rw-info { flex: 1; min-width: 0; }
+.rw-rank {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 2px;
+}
+.rw-sub { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rw-chevron .material-icons { font-size: 20px; color: var(--gold); }
+.rw-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+.rw-missions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.rw-missions .material-icons { font-size: 12px; }
+.rw-next { font-size: 11px; color: var(--muted); }
+
+/* Quick shop */
+.section-row {
+  padding: 0 20px;
+  margin-bottom: 10px;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.section-row-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.section-row-link {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+.quick-products {
+  display: flex;
+  gap: 10px;
+  padding: 0 20px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.quick-products::-webkit-scrollbar { display: none; }
+.quick-product {
+  flex-shrink: 0;
+  width: 136px;
+  background: var(--card);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  cursor: pointer;
+}
+.qp-img {
+  height: 88px;
+  background: var(--card2);
+  display: flex; align-items: center; justify-content: center;
+}
+.qp-img .material-icons { font-size: 40px; color: var(--muted2); }
+.qp-img img { width:100%; height:100%; object-fit:cover; display:block; }
+.ai-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+.qp-body { padding: 10px; }
+.qp-name {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: white;
+  margin-bottom: 3px;
+}
+.qp-price { font-size: 13px; font-weight: 700; color: var(--gold); }
+.qp-xp {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.qp-xp .material-icons { font-size: 11px; color: var(--gold); }
+
+/* Flash Op */
+.flash-op-card {
+  margin: 0 20px;
+  background: linear-gradient(135deg, #1C0E0E, #1C1C1C);
+  border: 1px solid rgba(201,64,64,0.45);
+  border-radius: 12px;
+  padding: 14px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.flash-op-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(201,64,64,0.06) 0%, transparent 55%);
+  pointer-events: none;
+}
+.fo-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.fo-badge {
+  background: var(--red);
+  color: white;
+  font-size: 9.5px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  animation: blink-badge 1.8s ease-in-out infinite;
+}
+.fo-badge .material-icons { font-size: 11px; }
+@keyframes blink-badge {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.65; }
+}
+.fo-timer {
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--red);
+  letter-spacing: 1.5px;
+  font-variant-numeric: tabular-nums;
+  margin-left: auto;
+}
+.fo-title {
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.3px;
+  color: white;
+  margin-bottom: 3px;
+}
+.fo-desc {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 12px;
+  line-height: 1.45;
+}
+.fo-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.fo-xp {
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.fo-xp .material-icons { font-size: 16px; }
+.fo-btn {
+  background: var(--red);
+  color: white;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 6px;
+  padding: 9px 16px;
+  cursor: pointer;
+}
+
+/* ════════════════════════════════════
+   SCREEN: HQ
+════════════════════════════════════ */
+.hq-hero {
+  background: linear-gradient(180deg, #1C1800 0%, var(--bg) 100%);
+  padding: 54px 20px 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hq-glow {
+  position: absolute;
+  top: -40px; left: 50%; transform: translateX(-50%);
+  width: 280px; height: 280px;
+  background: radial-gradient(circle, rgba(245,166,35,0.14) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hq-badge-wrap {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 16px;
+}
+.hq-ring1, .hq-ring2 {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(245,166,35,0.25);
+  animation: pulse-ring 2.2s ease-out infinite;
+}
+.hq-ring1 { inset: -10px; animation-delay: 0s; }
+.hq-ring2 { inset: -20px; animation-delay: 0.55s; opacity: 0.6; }
+@keyframes pulse-ring {
+  0%   { transform: scale(0.96); opacity: 0.8; }
+  100% { transform: scale(1.06); opacity: 0; }
+}
+.hq-badge-circle {
+  width: 96px; height: 96px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2E2400, #1A1A1A);
+  border: 2.5px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 28px rgba(245,166,35,0.28);
+  position: relative;
+  z-index: 1;
+}
+.hq-badge-circle .material-icons { font-size: 46px; color: var(--gold); }
+.hq-rank-name {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: white;
+  margin-bottom: 3px;
+}
+.hq-xp {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+}
+.hq-prog-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.hq-next {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+.hq-next strong { color: var(--gold); font-weight: 700; }
+
+/* Stats row */
+.hq-stats {
+  display: flex;
+  gap: 8px;
+  margin: 16px 20px;
+}
+.hq-stat {
+  flex: 1;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 8px;
+  text-align: center;
+}
+.hq-stat-num { font-size: 20px; font-weight: 900; color: var(--gold); }
+.hq-stat-label { font-size: 9.5px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); margin-top: 3px; }
+
+/* Active Duty */
+.duty-banner {
+  margin: 0 20px 16px;
+  background: linear-gradient(135deg, rgba(94,110,64,0.18), rgba(94,110,64,0.04));
+  border: 1px solid rgba(94,110,64,0.45);
+  border-radius: 10px;
+  padding: 13px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+.duty-icon-wrap {
+  width: 38px; height: 38px;
+  border-radius: 8px;
+  background: rgba(94,110,64,0.2);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.duty-icon-wrap .material-icons { font-size: 20px; color: #8FAA60; }
+.duty-text { flex: 1; min-width: 0; }
+.duty-title {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #8FAA60;
+  margin-bottom: 2px;
+}
+.duty-sub { font-size: 11px; color: var(--muted); }
+.duty-chevron .material-icons { font-size: 18px; color: #8FAA60; }
+
+/* Mission card (HQ preview) */
+.mission-card {
+  margin: 0 20px 10px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  cursor: pointer;
+}
+.mc-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.mc-icon {
+  width: 38px; height: 38px;
+  border-radius: 9px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.mc-icon .material-icons { font-size: 19px; color: var(--gold); }
+.mc-body { flex: 1; min-width: 0; }
+.mc-name {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: white;
+  margin-bottom: 2px;
+}
+.mc-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
+.mc-xp { font-size: 13px; font-weight: 800; color: var(--gold); white-space: nowrap; }
+.mc-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.mc-prog-wrap { flex: 1; }
+.mc-pct { font-size: 10px; color: var(--muted); margin-bottom: 5px; }
+.mc-claim {
+  background: var(--gold);
+  color: #000;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Armory preview strip */
+.armory-strip {
+  margin: 0 20px 10px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.as-header {
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.as-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: white;
+}
+.as-title .material-icons { font-size: 16px; color: var(--gold); }
+.as-xp { font-size: 12px; font-weight: 700; color: var(--gold); }
+.as-items { display: flex; }
+.as-item {
+  flex: 1;
+  padding: 14px 10px;
+  text-align: center;
+  border-right: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.as-item:last-child { border-right: none; }
+.as-item .material-icons { font-size: 26px; color: var(--muted2); display: block; margin-bottom: 5px; }
+.as-item-name { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: white; margin-bottom: 3px; line-height: 1.3; }
+.as-item-cost { font-size: 10px; font-weight: 700; color: var(--gold); }
+.as-lock {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(3px);
+  display: flex; align-items: center; justify-content: center;
+}
+.as-lock .material-icons { font-size: 18px; color: var(--muted); display: block; margin: 0; }
+
+/* Squad mini card */
+.squad-mini {
+  margin: 0 20px 4px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  cursor: pointer;
+}
+.sm-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.sm-header-title {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: white;
+  flex: 1;
+}
+.sm-header-xp { font-size: 11px; color: var(--gold); font-weight: 700; }
+.sm-header-chevron .material-icons { font-size: 18px; color: var(--gold); margin-left: 4px; }
+.sm-avatars {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+}
+.avatar-add {
+  border: 1.5px dashed var(--border);
+  background: transparent;
+}
+.avatar-add .material-icons { font-size: 16px; color: var(--muted2); }
+
+/* ════════════════════════════════════
+   SCREEN: MISSIONS
+════════════════════════════════════ */
+.filter-tabs {
+  display: flex;
+  gap: 7px;
+  padding: 0 20px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-bottom: 14px;
+}
+.filter-tabs::-webkit-scrollbar { display: none; }
+.filter-tab {
+  flex-shrink: 0;
+  padding: 7px 14px;
+  border-radius: 99px;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  color: var(--muted);
+  background: transparent;
+  transition: all 0.18s;
+}
+.filter-tab.active {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(245,166,35,0.08);
+}
+
+.full-mission-card {
+  margin: 0 20px 10px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.fmc-body {
+  padding: 14px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.fmc-icon-wrap {
+  width: 46px; height: 46px;
+  border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.fmc-icon-wrap .material-icons { font-size: 22px; }
+.fmc-icon-combat { background: rgba(201,64,64,0.14); }
+.fmc-icon-combat .material-icons { color: #E06060; }
+.fmc-icon-recon  { background: rgba(94,110,64,0.18); }
+.fmc-icon-recon  .material-icons { color: #8FAA60; }
+.fmc-icon-intel  { background: rgba(74,114,204,0.14); }
+.fmc-icon-intel  .material-icons { color: #7AABEE; }
+.fmc-icon-classified { background: rgba(201,64,64,0.14); }
+.fmc-icon-classified .material-icons { color: #E06060; }
+.fmc-content { flex: 1; min-width: 0; }
+.fmc-tags { display: flex; gap: 5px; margin-bottom: 6px; flex-wrap: wrap; }
+.fmc-name {
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: white;
+  margin-bottom: 3px;
+}
+.fmc-desc { font-size: 11.5px; color: var(--muted); line-height: 1.5; }
+.fmc-footer {
+  padding: 10px 14px 12px;
+  background: var(--card2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.fmc-prog { flex: 1; }
+.fmc-prog-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+.fmc-xp-chip {
+  background: rgba(245,166,35,0.12);
+  border: 1px solid rgba(245,166,35,0.28);
+  border-radius: 6px;
+  padding: 5px 11px;
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+/* ════════════════════════════════════
+   SCREEN: ARMORY
+════════════════════════════════════ */
+.tier-header {
+  margin: 0 20px 10px;
+  padding: 12px 14px;
+  background: var(--card);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.tier-icon-wrap {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.tier-icon-wrap .material-icons { font-size: 20px; }
+.tier-info { flex: 1; min-width: 0; }
+.tier-name {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: white;
+  margin-bottom: 2px;
+}
+.tier-sub { font-size: 10.5px; color: var(--muted); }
+.tier-status .material-icons { font-size: 20px; }
+
+.armory-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 0 20px 16px;
+}
+.armory-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+}
+.ai-thumb {
+  height: 88px;
+  background: var(--card2);
+  display: flex; align-items: center; justify-content: center;
+}
+.ai-thumb .material-icons { font-size: 40px; color: var(--muted2); }
+.ai-lock-layer {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 88px;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+}
+.ai-lock-layer .material-icons { font-size: 22px; color: var(--muted); }
+.ai-info { padding: 10px; }
+.ai-name {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: white;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+.ai-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ai-cost { font-size: 12px; font-weight: 900; color: var(--gold); }
+.ai-redeem {
+  background: var(--gold);
+  color: #000;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 9px;
+  cursor: pointer;
+}
+.ai-locked-note {
+  font-size: 10px;
+  color: var(--muted);
+  text-align: center;
+  padding: 8px 6px 2px;
+}
+
+.tier3-blurred {
+  margin: 0 20px 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  padding: 20px;
+  text-align: center;
+}
+.tier3-icons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 10px;
+  filter: blur(5px);
+}
+.tier3-icons .material-icons { font-size: 36px; color: var(--muted2); }
+.tier3-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ════════════════════════════════════
+   SCREEN: SQUAD
+════════════════════════════════════ */
+.squad-hero {
+  background: linear-gradient(180deg, #0D160D 0%, var(--bg) 100%);
+  padding: 54px 20px 20px;
+  text-align: center;
+}
+.squad-hero-icon {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: rgba(94,110,64,0.18);
+  border: 1.5px solid rgba(94,110,64,0.4);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 12px;
+}
+.squad-hero-icon .material-icons { font-size: 30px; color: #8FAA60; }
+.squad-name {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: white;
+  margin-bottom: 4px;
+}
+.squad-name em { color: var(--gold); font-style: normal; }
+.squad-sub { font-size: 12px; color: var(--muted); }
+
+.squad-members-row {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  padding: 16px 20px;
+}
+.squad-member {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+.squad-avatar {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: white;
+  position: relative;
+  flex-shrink: 0;
+}
+.squad-avatar.is-you { border: 2px solid var(--gold); }
+.squad-avatar.online::after {
+  content: '';
+  position: absolute;
+  bottom: 1px; right: 1px;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--green);
+  border: 2px solid var(--bg);
+}
+.squad-avatar-add {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  border: 1.5px dashed var(--border);
+  display: flex; align-items: center; justify-content: center;
+}
+.squad-avatar-add .material-icons { font-size: 22px; color: var(--muted2); }
+.squad-member-name { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+.squad-member-rank { font-size: 10px; color: var(--gold); font-weight: 700; }
+.squad-member-xp { font-size: 10px; color: var(--muted2); font-weight: 600; }
+
+.squad-mission-card {
+  margin: 0 20px 14px;
+  background: linear-gradient(135deg, #0D160D, var(--card));
+  border: 1px solid rgba(76,175,80,0.35);
+  border-radius: 12px;
+  padding: 14px;
+}
+.smc-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.smc-icon {
+  width: 38px; height: 38px;
+  border-radius: 9px;
+  background: rgba(76,175,80,0.14);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.smc-icon .material-icons { font-size: 20px; color: var(--green); }
+.smc-title { font-size: 13px; font-weight: 900; letter-spacing: 0.8px; text-transform: uppercase; color: white; flex: 1; }
+.smc-xp-chip {
+  background: rgba(76,175,80,0.15);
+  border: 1px solid rgba(76,175,80,0.35);
+  border-radius: 5px;
+  padding: 4px 9px;
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--green);
+  white-space: nowrap;
+}
+.smc-desc { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+.smc-prog-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.smc-prog-wrap { flex: 1; }
+.smc-prog-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); margin-bottom: 5px; }
+.smc-count { font-size: 18px; font-weight: 900; color: var(--green); width: 36px; text-align: right; flex-shrink: 0; }
+.smc-sep { height: 1px; background: rgba(76,175,80,0.2); margin: 10px 0; }
+.contrib-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.contrib-row:last-child { margin-bottom: 0; }
+.contrib-name { font-size: 10.5px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; width: 52px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.contrib-bar { flex: 1; }
+.contrib-count { font-size: 11px; font-weight: 700; color: var(--gold); width: 18px; text-align: right; flex-shrink: 0; }
+
+/* ════════════════════════════════════
+   RANK UP OVERLAY
+════════════════════════════════════ */
+.rankup-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.96);
+  z-index: 800;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px 28px;
+}
+.rankup-overlay.show { display: flex; }
+.rankup-stars {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  animation: pop 0.5s ease-out both;
+}
+.rankup-stars .material-icons { font-size: 28px; color: var(--gold); }
+@keyframes pop {
+  0%   { transform: scale(0.1); opacity: 0; }
+  70%  { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.rankup-badge {
+  width: 112px; height: 112px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2E2400, #181818);
+  border: 3px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 50px rgba(245,166,35,0.45);
+  margin-bottom: 20px;
+  animation: pop 0.55s 0.15s ease-out both;
+}
+.rankup-badge .material-icons { font-size: 52px; color: var(--gold); }
+.rankup-up {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 6px;
+  animation: pop 0.45s 0.35s ease-out both;
+}
+.rankup-rank {
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: white;
+  margin-bottom: 8px;
+  animation: pop 0.45s 0.45s ease-out both;
+}
+.rankup-sub {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 24px;
+  animation: pop 0.45s 0.55s ease-out both;
+}
+.rankup-unlock-box {
+  background: var(--card);
+  border: 1px solid rgba(245,166,35,0.45);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  width: 100%;
+  animation: pop 0.45s 0.65s ease-out both;
+}
+.rankup-unlock-label {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.rankup-unlock-label .material-icons { font-size: 14px; }
+.rankup-unlock-item { font-size: 13px; color: white; font-weight: 600; }
+.rankup-btn {
+  animation: pop 0.45s 0.75s ease-out both;
+  width: 100%;
+}
+
+/* ════════════════════════════════════
+   TOAST
+════════════════════════════════════ */
+.toast {
+  position: absolute;
+  bottom: 96px;
+  left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  background: #2a2a2a;
+  border: 1px solid var(--border);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 10px 18px;
+  border-radius: 99px;
+  opacity: 0;
+  z-index: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: all 0.25s;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+</style>
+</head>
+<body>
+
+<div class="phone">
+
+  <!-- Dynamic island -->
+  <div class="island"></div>
+
+  <!-- Status bar -->
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons">
+      <span class="material-icons" style="font-size:14px">signal_cellular_alt</span>
+      <span class="material-icons" style="font-size:14px">wifi</span>
+      <div class="battery-icon">
+        <div class="battery-body"><div class="battery-fill"></div></div>
+        <div class="battery-tip"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ HOME ═══════════ -->
+  <div class="screen active" id="screen-home">
+
+    <div class="home-hero">
+      <div class="hero-topbar">
+        <span class="hero-logo">Black Rifle Coffee Co.</span>
+        <div class="hero-actions">
+          <div class="hero-icon-btn" onclick="showToast('Search')">
+            <span class="material-icons">search</span>
+          </div>
+          <div class="hero-icon-btn" onclick="showToast('Cart')">
+            <span class="material-icons">shopping_cart</span>
+          </div>
+        </div>
+      </div>
+      <div class="home-greeting">Welcome back,<br><em>Devoted.</em></div>
+    </div>
+
+    <div class="regiment-widget" onclick="goTo('screen-hq'); setNav('nav-hq')">
+      <div class="rw-row">
+        <div class="rw-badge">
+          <span class="material-icons">military_tech</span>
+        </div>
+        <div class="rw-info">
+          <div class="rw-rank">Devoted</div>
+          <div class="rw-sub">2,340 pts · The Regiment</div>
+        </div>
+        <div class="rw-chevron"><span class="material-icons">chevron_right</span></div>
+      </div>
+      <div class="progress-wrap" style="height:6px">
+        <div class="progress-fill" style="width:77%"></div>
+      </div>
+      <div class="rw-foot">
+        <div class="rw-missions">
+          <span class="material-icons">bolt</span>
+          2 challenges active
+        </div>
+        <div class="rw-next">680 pts to Elite</div>
+      </div>
+    </div>
+
+    <div class="section-row">
+      <div class="section-row-label">Shop</div>
+      <div class="section-row-link">See all</div>
+    </div>
+    <div class="quick-products">
+      <div class="quick-product">
+        <div class="qp-img"><img src="https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=300&q=80" alt="Hazelnut"></div>
+        <div class="qp-body">
+          <div class="qp-name">Hazelnut</div>
+          <div class="qp-price">$26.99</div>
+          <div class="qp-xp"><span class="material-icons">add</span>120 pts</div>
+        </div>
+      </div>
+      <div class="quick-product">
+        <div class="qp-img"><img src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=300&q=80" alt="RTD 300mg"></div>
+        <div class="qp-body">
+          <div class="qp-name">RTD 300mg</div>
+          <div class="qp-price">$34.99</div>
+          <div class="qp-xp"><span class="material-icons">add</span>150 pts</div>
+        </div>
+      </div>
+      <div class="quick-product">
+        <div class="qp-img"><img src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=300&q=80" alt="BRCC Tee"></div>
+        <div class="qp-body">
+          <div class="qp-name">BRCC Tee</div>
+          <div class="qp-price">$29.99</div>
+          <div class="qp-xp"><span class="material-icons">add</span>130 pts</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-row" style="margin-top:16px">
+      <div class="section-row-label">Featured Offer</div>
+    </div>
+    <div class="flash-op-card" onclick="goTo('screen-missions'); setNav('nav-missions')">
+      <div class="fo-header">
+        <div class="fo-badge">
+          <span class="material-icons">schedule</span>
+          Limited
+        </div>
+        <div class="fo-timer" id="home-timer">04:32:17</div>
+      </div>
+      <div class="fo-title">Try a New Roast</div>
+      <div class="fo-desc">Order a roast you haven't tried before. Available for a limited time.</div>
+      <div class="fo-footer">
+        <div class="fo-xp"><span class="material-icons">stars</span>+1,200 pts</div>
+        <button class="fo-btn">Get Started</button>
+      </div>
+    </div>
+
+    <div style="height:20px"></div>
+  </div>
+
+  <!-- ═══════════ HQ ═══════════ -->
+  <div class="screen" id="screen-hq">
+
+    <div class="hq-hero">
+      <div class="hq-glow"></div>
+      <div class="hq-badge-wrap">
+        <div class="hq-ring2"></div>
+        <div class="hq-ring1"></div>
+        <div class="hq-badge-circle">
+          <span class="material-icons">military_tech</span>
+        </div>
+      </div>
+      <div class="hq-rank-name">Devoted</div>
+      <div class="hq-xp">2,340 points</div>
+      <div class="hq-prog-labels">
+        <span>Devoted</span>
+        <span>Elite</span>
+      </div>
+      <div class="progress-wrap" style="height:7px">
+        <div class="progress-fill" id="hq-prog-bar" style="width:0%"></div>
+      </div>
+      <div class="hq-next" style="margin-top:8px">680 points to <strong>Elite</strong></div>
+    </div>
+
+    <div class="hq-stats">
+      <div class="hq-stat">
+        <div class="hq-stat-num">14</div>
+        <div class="hq-stat-label">Challenges</div>
+      </div>
+      <div class="hq-stat">
+        <div class="hq-stat-num">3</div>
+        <div class="hq-stat-label">Squad</div>
+      </div>
+      <div class="hq-stat">
+        <div class="hq-stat-num">3,200</div>
+        <div class="hq-stat-label">Points</div>
+      </div>
+    </div>
+
+    <div class="duty-banner" onclick="showToast('Active Duty verification coming soon')">
+      <div class="duty-icon-wrap">
+        <span class="material-icons">workspace_premium</span>
+      </div>
+      <div class="duty-text">
+        <div class="duty-title">Military &amp; Veteran Benefit</div>
+        <div class="duty-sub">Verified service members receive double points on every order</div>
+      </div>
+      <div class="duty-chevron"><span class="material-icons">chevron_right</span></div>
+    </div>
+
+    <div class="section-label">Your Challenges</div>
+
+    <div class="mission-card">
+      <div class="mc-top">
+        <div class="mc-icon"><span class="material-icons">gps_fixed</span></div>
+        <div class="mc-body">
+          <div class="mc-name">First Subscription</div>
+          <div class="mc-desc">Complete your first subscription order</div>
+        </div>
+        <div class="mc-xp">+500 pts</div>
+      </div>
+      <div class="mc-foot">
+        <div class="mc-prog-wrap">
+          <div class="mc-pct">80% complete</div>
+          <div class="progress-wrap" style="height:6px">
+            <div class="progress-fill" style="width:80%"></div>
+          </div>
+        </div>
+        <button class="mc-claim" onclick="claimMission(event)">Claim</button>
+      </div>
+    </div>
+
+    <div class="flash-op-card" onclick="goTo('screen-missions'); setNav('nav-missions')" style="margin-bottom:16px">
+      <div class="fo-header">
+        <div class="fo-badge"><span class="material-icons">schedule</span>Limited Offer</div>
+        <div class="fo-timer" id="hq-timer">04:32:17</div>
+      </div>
+      <div class="fo-title">Try a New Roast</div>
+      <div class="fo-desc">Order a roast you haven't tried before. Available for a limited time.</div>
+      <div class="fo-footer">
+        <div class="fo-xp"><span class="material-icons">stars</span>+1,200 pts</div>
+        <button class="fo-btn">Get Started</button>
+      </div>
+    </div>
+
+    <div class="section-label">Rewards</div>
+    <div class="armory-strip" onclick="goTo('screen-armory'); setNav('nav-armory')">
+      <div class="as-header">
+        <div class="as-title">
+          <span class="material-icons">redeem</span>
+          Rewards
+        </div>
+        <div class="as-xp">3,200 pts available</div>
+      </div>
+      <div class="as-items">
+        <div class="as-item">
+          <span class="material-icons">local_cafe</span>
+          <div class="as-item-name">Free Coffee</div>
+          <div class="as-item-cost">500 pts</div>
+        </div>
+        <div class="as-item">
+          <span class="material-icons">local_offer</span>
+          <div class="as-item-name">10% Off</div>
+          <div class="as-item-cost">750 pts</div>
+        </div>
+        <div class="as-item">
+          <span class="material-icons" style="filter:blur(3px)">redeem</span>
+          <div class="as-item-name" style="filter:blur(3px)">???</div>
+          <div class="as-item-cost" style="filter:blur(3px)">???</div>
+          <div class="as-lock"><span class="material-icons">lock</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-top:16px">Your Squad</div>
+    <div class="squad-mini" onclick="goTo('screen-squad'); setNav('nav-squad')">
+      <div class="sm-header">
+        <div class="sm-header-title">Alpha Team</div>
+        <div class="sm-header-xp">4,200 pts this month</div>
+        <div class="sm-header-chevron"><span class="material-icons">chevron_right</span></div>
+      </div>
+      <div class="sm-avatars">
+        <div class="avatar" style="background:#3A3A2A;border:2px solid var(--gold)">JO</div>
+        <div class="avatar" style="background:#2A2E3A;border:2px solid var(--border)">JM</div>
+        <div class="avatar" style="background:#2A3A2E;border:2px solid var(--border)">SK</div>
+        <div class="avatar avatar-add"><span class="material-icons">person_add</span></div>
+      </div>
+    </div>
+
+    <div style="height:20px"></div>
+  </div>
+
+  <!-- ═══════════ MISSIONS ═══════════ -->
+  <div class="screen" id="screen-missions">
+    <div class="screen-header">
+      <div class="screen-title">Challenges</div>
+    </div>
+
+    <div class="filter-tabs">
+      <div class="filter-tab active" onclick="filterMissions(this,'all')">All</div>
+      <div class="filter-tab" onclick="filterMissions(this,'combat')">Purchases</div>
+      <div class="filter-tab" onclick="filterMissions(this,'recon')">Discovery</div>
+      <div class="filter-tab" onclick="filterMissions(this,'intel')">Engagement</div>
+      <div class="filter-tab" onclick="filterMissions(this,'classified')">Limited</div>
+    </div>
+
+    <!-- Limited offer -->
+    <div class="flash-op-card" data-cat="classified" style="margin-bottom:10px">
+      <div class="fo-header">
+        <div class="fo-badge"><span class="material-icons">schedule</span>Limited Offer</div>
+        <div class="fo-timer" id="mission-timer">04:32:17</div>
+      </div>
+      <div class="fo-title">Try a New Roast</div>
+      <div class="fo-desc">Order a roast you haven't tried before. Available for 24 hours.</div>
+      <div class="fo-footer">
+        <div class="fo-xp"><span class="material-icons">stars</span>+1,200 pts</div>
+        <button class="fo-btn" onclick="showToast('+1,200 pts earned')">Get Started</button>
+      </div>
+    </div>
+
+    <!-- Purchase challenges -->
+    <div class="full-mission-card" data-cat="combat">
+      <div class="fmc-body">
+        <div class="fmc-icon-wrap fmc-icon-combat">
+          <span class="material-icons">gps_fixed</span>
+        </div>
+        <div class="fmc-content">
+          <div class="fmc-tags">
+            <span class="tag tag-red">Purchase</span>
+            <span class="tag tag-dark">In Progress</span>
+          </div>
+          <div class="fmc-name">First Subscription</div>
+          <div class="fmc-desc">Start your first subscription and earn points on every delivery.</div>
+        </div>
+      </div>
+      <div class="fmc-footer">
+        <div class="fmc-prog">
+          <div class="fmc-prog-labels"><span>80% complete</span><span style="color:var(--gold)">1 / 1 orders</span></div>
+          <div class="progress-wrap" style="height:6px"><div class="progress-fill" style="width:80%"></div></div>
+        </div>
+        <div class="fmc-xp-chip">+500 pts</div>
+      </div>
+    </div>
+
+    <div class="full-mission-card" data-cat="combat">
+      <div class="fmc-body">
+        <div class="fmc-icon-wrap fmc-icon-combat">
+          <span class="material-icons">shopping_bag</span>
+        </div>
+        <div class="fmc-content">
+          <div class="fmc-tags">
+            <span class="tag tag-red">Purchase</span>
+            <span class="tag tag-dark">Not Started</span>
+          </div>
+          <div class="fmc-name">Single Order</div>
+          <div class="fmc-desc">Place a one-time order of $100 or more.</div>
+        </div>
+      </div>
+      <div class="fmc-footer">
+        <div class="fmc-prog">
+          <div class="fmc-prog-labels"><span>Not started</span><span>$0 / $100</span></div>
+          <div class="progress-wrap" style="height:6px"><div class="progress-fill" style="width:0%"></div></div>
+        </div>
+        <div class="fmc-xp-chip">+800 pts</div>
+      </div>
+    </div>
+
+    <!-- Discovery challenges -->
+    <div class="full-mission-card" data-cat="recon">
+      <div class="fmc-body">
+        <div class="fmc-icon-wrap fmc-icon-recon">
+          <span class="material-icons">location_on</span>
+        </div>
+        <div class="fmc-content">
+          <div class="fmc-tags">
+            <span class="tag tag-olive">Discovery</span>
+            <span class="tag tag-dark">Available</span>
+          </div>
+          <div class="fmc-name">Store Visit</div>
+          <div class="fmc-desc">Check in at any BRCC location through the store locator.</div>
+        </div>
+      </div>
+      <div class="fmc-footer">
+        <div class="fmc-prog">
+          <div class="fmc-prog-labels"><span>Not started</span><span>0 / 1 check-ins</span></div>
+          <div class="progress-wrap" style="height:6px"><div class="progress-fill" style="width:0%"></div></div>
+        </div>
+        <div class="fmc-xp-chip">+300 pts</div>
+      </div>
+    </div>
+
+    <div class="full-mission-card" data-cat="recon">
+      <div class="fmc-body">
+        <div class="fmc-icon-wrap fmc-icon-recon">
+          <span class="material-icons">group_add</span>
+        </div>
+        <div class="fmc-content">
+          <div class="fmc-tags">
+            <span class="tag tag-olive">Discovery</span>
+            <span class="tag tag-dark">1 / 3 Done</span>
+          </div>
+          <div class="fmc-name">Refer a Friend</div>
+          <div class="fmc-desc">Share your referral link and earn points when friends join.</div>
+        </div>
+      </div>
+      <div class="fmc-footer">
+        <div class="fmc-prog">
+          <div class="fmc-prog-labels"><span>33% complete</span><span>1 / 3 referrals</span></div>
+          <div class="progress-wrap" style="height:6px"><div class="progress-fill" style="width:33%"></div></div>
+        </div>
+        <div class="fmc-xp-chip">+600 pts</div>
+      </div>
+    </div>
+
+    <!-- Engagement challenges -->
+    <div class="full-mission-card" data-cat="intel">
+      <div class="fmc-body">
+        <div class="fmc-icon-wrap fmc-icon-intel">
+          <span class="material-icons">star_rate</span>
+        </div>
+        <div class="fmc-content">
+          <div class="fmc-tags">
+            <span class="tag tag-blue">Engagement</span>
+            <span class="tag tag-dark">Available</span>
+          </div>
+          <div class="fmc-name">Write a Review</div>
+          <div class="fmc-desc">Leave a verified review on any BRCC product you've purchased.</div>
+        </div>
+      </div>
+      <div class="fmc-footer">
+        <div class="fmc-prog">
+          <div class="fmc-prog-labels"><span>Not started</span><span>0 / 1 reviews</span></div>
+          <div class="progress-wrap" style="height:6px"><div class="progress-fill" style="width:0%"></div></div>
+        </div>
+        <div class="fmc-xp-chip">+250 pts</div>
+      </div>
+    </div>
+
+    <div class="full-mission-card" data-cat="intel">
+      <div class="fmc-body">
+        <div class="fmc-icon-wrap fmc-icon-intel">
+          <span class="material-icons">assignment</span>
+        </div>
+        <div class="fmc-content">
+          <div class="fmc-tags">
+            <span class="tag tag-blue">Engagement</span>
+            <span class="tag tag-dark">Available</span>
+          </div>
+          <div class="fmc-name">Coffee Profile</div>
+          <div class="fmc-desc">Answer a few questions to unlock personalised product recommendations.</div>
+        </div>
+      </div>
+      <div class="fmc-footer">
+        <div class="fmc-prog">
+          <div class="fmc-prog-labels"><span>Not started</span><span>5 questions</span></div>
+          <div class="progress-wrap" style="height:6px"><div class="progress-fill" style="width:0%"></div></div>
+        </div>
+        <div class="fmc-xp-chip">+400 pts</div>
+      </div>
+    </div>
+
+    <div style="height:16px"></div>
+  </div>
+
+  <!-- ═══════════ ARMORY ═══════════ -->
+  <div class="screen" id="screen-armory">
+    <div class="screen-header">
+      <div class="screen-title">Rewards</div>
+      <div style="font-size:12px;font-weight:700;color:var(--gold);display:flex;align-items:center;gap:4px">
+        <span class="material-icons" style="font-size:14px">stars</span>
+        3,200 pts
+      </div>
+    </div>
+
+    <div style="padding:0 20px 16px">
+      <div style="font-size:12px;color:var(--muted);line-height:1.6">Redeem points for exclusive rewards. Your tier grows with your rank.</div>
+    </div>
+
+    <!-- Tier 1 -->
+    <div class="tier-header">
+      <div class="tier-icon-wrap" style="background:rgba(245,166,35,0.12)">
+        <span class="material-icons" style="color:var(--gold)">emoji_events</span>
+      </div>
+      <div class="tier-info">
+        <div class="tier-name">Tier 1 — Member</div>
+        <div class="tier-sub">Available from day one</div>
+      </div>
+      <div class="tier-status">
+        <span class="material-icons" style="color:var(--green)">check_circle</span>
+      </div>
+    </div>
+
+    <div class="armory-grid">
+      <div class="armory-item">
+        <div class="ai-thumb"><img src="https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=300&q=80" alt="Coffee"></div>
+        <div class="ai-info">
+          <div class="ai-name">Free Bag of Coffee</div>
+          <div class="ai-row">
+            <div class="ai-cost">500 pts</div>
+            <button class="ai-redeem" onclick="redeemItem(event,'Free Coffee',500)">Redeem</button>
+          </div>
+        </div>
+      </div>
+      <div class="armory-item">
+        <div class="ai-thumb"><img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=300&q=80" alt="Coffee"></div>
+        <div class="ai-info">
+          <div class="ai-name">10% Discount Code</div>
+          <div class="ai-row">
+            <div class="ai-cost">750 pts</div>
+            <button class="ai-redeem" onclick="redeemItem(event,'10% Off',750)">Redeem</button>
+          </div>
+        </div>
+      </div>
+      <div class="armory-item">
+        <div class="ai-thumb"><img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&q=80" alt="Patch"></div>
+        <div class="ai-info">
+          <div class="ai-name">BRCC Patch</div>
+          <div class="ai-row">
+            <div class="ai-cost">300 pts</div>
+            <button class="ai-redeem" onclick="redeemItem(event,'BRCC Patch',300)">Redeem</button>
+          </div>
+        </div>
+      </div>
+      <div class="armory-item">
+        <div class="ai-thumb"><img src="https://images.unsplash.com/photo-1521369909029-2afed882baee?w=300&q=80" alt="Cap"></div>
+        <div class="ai-info">
+          <div class="ai-name">BRCC Cap</div>
+          <div class="ai-row">
+            <div class="ai-cost">1,200 pts</div>
+            <button class="ai-redeem" onclick="redeemItem(event,'BRCC Cap',1200)">Redeem</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tier 2 locked -->
+    <div class="tier-header" style="opacity:0.55">
+      <div class="tier-icon-wrap" style="background:rgba(136,136,136,0.1)">
+        <span class="material-icons" style="color:var(--muted)">workspace_premium</span>
+      </div>
+      <div class="tier-info">
+        <div class="tier-name">Tier 2 — Devoted</div>
+        <div class="tier-sub">Available at Elite · 680 pts away</div>
+      </div>
+      <div class="tier-status">
+        <span class="material-icons" style="color:var(--muted2)">lock</span>
+      </div>
+    </div>
+
+    <!-- Tier 2 locked cards -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 20px 16px">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;overflow:hidden">
+        <div style="height:88px;background:linear-gradient(135deg,#1a1a1a,#242424);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px">
+          <span class="material-icons" style="font-size:22px;color:var(--muted2)">lock</span>
+        </div>
+        <div style="padding:10px">
+          <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.4px;color:var(--muted2);margin-bottom:4px">Exclusive Merch</div>
+          <div style="font-size:10px;color:var(--muted2)">Unlocks at Elite</div>
+        </div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;overflow:hidden">
+        <div style="height:88px;background:linear-gradient(135deg,#1a1a1a,#242424);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px">
+          <span class="material-icons" style="font-size:22px;color:var(--muted2)">lock</span>
+        </div>
+        <div style="padding:10px">
+          <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.4px;color:var(--muted2);margin-bottom:4px">Reserve Roasts</div>
+          <div style="font-size:10px;color:var(--muted2)">Unlocks at Elite</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress nudge -->
+    <div style="margin:0 20px 20px;background:rgba(245,166,35,0.06);border:1px solid rgba(245,166,35,0.18);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:12px">
+      <span class="material-icons" style="font-size:18px;color:var(--gold);flex-shrink:0">trending_up</span>
+      <div style="flex:1">
+        <div style="font-size:11px;font-weight:700;color:white;margin-bottom:2px">680 pts from Elite</div>
+        <div style="font-size:10.5px;color:var(--muted)">Complete your first subscription to get there.</div>
+      </div>
+    </div>
+
+    <!-- Tier 3 locked -->
+    <div class="tier-header" style="opacity:0.5">
+      <div class="tier-icon-wrap" style="background:rgba(136,136,136,0.08)">
+        <span class="material-icons" style="color:var(--muted2)">bolt</span>
+      </div>
+      <div class="tier-info">
+        <div class="tier-name">Tier 3 — Founding</div>
+        <div class="tier-sub">Founder calls · Exclusive roasts · Name on a bag</div>
+      </div>
+      <div class="tier-status">
+        <span class="material-icons" style="color:var(--muted2)">lock</span>
+      </div>
+    </div>
+
+    <!-- Tier 3 teaser cards -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:0 20px 24px;opacity:0.4;pointer-events:none">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 8px;text-align:center">
+        <span class="material-icons" style="font-size:22px;color:var(--muted2);display:block;margin-bottom:5px">mic</span>
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted2)">Founder Call</div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 8px;text-align:center">
+        <span class="material-icons" style="font-size:22px;color:var(--muted2);display:block;margin-bottom:5px">coffee</span>
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted2)">Reserve Roast</div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 8px;text-align:center">
+        <span class="material-icons" style="font-size:22px;color:var(--muted2);display:block;margin-bottom:5px">inventory_2</span>
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted2)">Named Bag</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══════════ SQUAD ═══════════ -->
+  <div class="screen" id="screen-squad">
+
+    <div class="squad-hero">
+      <div class="squad-hero-icon">
+        <span class="material-icons">groups</span>
+      </div>
+      <div class="squad-name">Alpha <em>Team</em></div>
+      <div class="squad-sub">4,200 group points this month</div>
+    </div>
+
+    <div class="squad-members-row">
+      <div class="squad-member">
+        <div class="squad-avatar is-you online" style="background:#3A3A28">JO</div>
+        <div class="squad-member-name">You</div>
+        <div class="squad-member-rank">Devoted</div>
+      </div>
+      <div class="squad-member">
+        <div class="squad-avatar online" style="background:#28303A">JM</div>
+        <div class="squad-member-name">Jake M.</div>
+        <div class="squad-member-rank">Devoted</div>
+      </div>
+      <div class="squad-member">
+        <div class="squad-avatar" style="background:#28382C">SK</div>
+        <div class="squad-member-name">Sarah K.</div>
+        <div class="squad-member-rank">Loyal</div>
+      </div>
+      <div class="squad-member" onclick="showToast('Invite link copied')">
+        <div class="squad-avatar-add"><span class="material-icons">person_add</span></div>
+        <div class="squad-member-name">Invite</div>
+        <div class="squad-member-xp">+200 pts</div>
+      </div>
+      <div class="squad-member" onclick="showToast('Invite link copied')">
+        <div class="squad-avatar-add"><span class="material-icons">person_add</span></div>
+        <div class="squad-member-name">Invite</div>
+        <div class="squad-member-xp">+200 pts</div>
+      </div>
+    </div>
+
+    <div class="divider" style="margin-bottom:16px"></div>
+
+    <div class="section-label">Group Challenge</div>
+    <div class="squad-mission-card">
+      <div class="smc-top">
+        <div class="smc-icon"><span class="material-icons">inventory_2</span></div>
+        <div class="smc-title">Group Order</div>
+        <div class="smc-xp-chip">+2,000 pts each</div>
+      </div>
+      <div class="smc-desc">Order 10 bags as a group this month. Each member earns 2,000 points when you hit the target.</div>
+      <div class="smc-prog-row">
+        <div class="smc-prog-wrap">
+          <div class="smc-prog-labels">
+            <span>8 of 10 bags ordered</span>
+            <span style="color:var(--green)">2 to go</span>
+          </div>
+          <div class="progress-wrap" style="height:8px">
+            <div class="progress-fill" style="width:80%;background:linear-gradient(90deg,#2a6b2e,#4CAF50)"></div>
+          </div>
+        </div>
+        <div class="smc-count">8/10</div>
+      </div>
+      <div class="smc-sep"></div>
+      <div class="contrib-row">
+        <div class="contrib-name">You</div>
+        <div class="contrib-bar">
+          <div class="progress-wrap" style="height:4px">
+            <div class="progress-fill" style="width:37.5%"></div>
+          </div>
+        </div>
+        <div class="contrib-count">3</div>
+      </div>
+      <div class="contrib-row">
+        <div class="contrib-name">Jake M.</div>
+        <div class="contrib-bar">
+          <div class="progress-wrap" style="height:4px">
+            <div class="progress-fill" style="width:37.5%"></div>
+          </div>
+        </div>
+        <div class="contrib-count">3</div>
+      </div>
+      <div class="contrib-row">
+        <div class="contrib-name">Sarah K.</div>
+        <div class="contrib-bar">
+          <div class="progress-wrap" style="height:4px">
+            <div class="progress-fill" style="width:25%"></div>
+          </div>
+        </div>
+        <div class="contrib-count">2</div>
+      </div>
+    </div>
+
+    <div style="padding:0 20px 4px">
+      <button class="gold-btn" onclick="showToast('Invite link copied to clipboard')">
+        <span class="material-icons" style="font-size:18px">share</span>
+        Invite a Friend — +200 pts
+      </button>
+    </div>
+
+    <div style="height:16px"></div>
+  </div>
+
+  <!-- ═══════════ NAV BAR ═══════════ -->
+  <div class="nav-bar">
+    <div class="nav-item active" id="nav-home" onclick="goTo('screen-home'); setNav('nav-home')">
+      <span class="material-icons">home</span>
+      <div class="nav-label">Home</div>
+    </div>
+    <div class="nav-item" id="nav-hq" onclick="goTo('screen-hq'); setNav('nav-hq')">
+      <div class="nav-regiment-wrap">
+        <span class="material-icons">military_tech</span>
+        <div class="nav-pip"></div>
+      </div>
+      <div class="nav-label">Regiment</div>
+    </div>
+    <div class="nav-item" id="nav-missions" onclick="goTo('screen-missions'); setNav('nav-missions')">
+      <span class="material-icons">gps_fixed</span>
+      <div class="nav-label">Challenges</div>
+    </div>
+    <div class="nav-item" id="nav-armory" onclick="goTo('screen-armory'); setNav('nav-armory')">
+      <span class="material-icons">redeem</span>
+      <div class="nav-label">Rewards</div>
+    </div>
+    <div class="nav-item" id="nav-squad" onclick="goTo('screen-squad'); setNav('nav-squad')">
+      <span class="material-icons">groups</span>
+      <div class="nav-label">Squad</div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Rank Up Overlay -->
+  <div class="rankup-overlay" id="rankup-overlay">
+    <div class="rankup-stars">
+      <span class="material-icons">star</span>
+      <span class="material-icons">star</span>
+      <span class="material-icons">star</span>
+    </div>
+    <div class="rankup-badge">
+      <span class="material-icons">military_tech</span>
+    </div>
+    <div class="rankup-up">Rank Up</div>
+    <div class="rankup-rank">Elite</div>
+    <div class="rankup-sub">You've earned a promotion.<br>Welcome to the Devoted tier.</div>
+    <div class="rankup-unlock-box">
+      <div class="rankup-unlock-label">
+        <span class="material-icons">lock_open</span>
+        Rewards Tier 2 Now Available
+      </div>
+      <div class="rankup-unlock-item">Exclusive merch, reserve roasts &amp; early access</div>
+    </div>
+    <div class="rankup-btn">
+      <button class="gold-btn" onclick="document.getElementById('rankup-overlay').classList.remove('show')">
+        <span class="material-icons" style="font-size:18px">redeem</span>
+        View Your Rewards
+      </button>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+
+<script>
+const allScreens = document.querySelectorAll('.screen');
+const allNavItems = document.querySelectorAll('.nav-item');
+
+function goTo(id) {
+  allScreens.forEach(s => { s.classList.remove('active','slide-in'); });
+  const t = document.getElementById(id);
+  t.classList.add('active');
+  requestAnimationFrame(() => t.classList.add('slide-in'));
+  t.scrollTop = 0;
+  if (id === 'screen-hq') {
+    setTimeout(() => { document.getElementById('hq-prog-bar').style.width = '77%'; }, 250);
+  }
+}
+
+function setNav(id) {
+  allNavItems.forEach(n => n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+function claimMission(e) {
+  e.stopPropagation();
+  showToast('+500 pts earned');
+  setTimeout(() => { document.getElementById('rankup-overlay').classList.add('show'); }, 1100);
+}
+
+function redeemItem(e, name, cost) {
+  e.stopPropagation();
+  showToast(name + ' redeemed — −' + cost + ' pts');
+}
+
+function filterMissions(el, cat) {
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('[data-cat]').forEach(card => {
+    card.style.display = (cat === 'all' || card.dataset.cat === cat) ? '' : 'none';
+  });
+}
+
+// Countdown
+let secs = 4 * 3600 + 32 * 60 + 17;
+setInterval(() => {
+  if (--secs < 0) secs = 86400;
+  const h = String(Math.floor(secs / 3600)).padStart(2,'0');
+  const m = String(Math.floor(secs % 3600 / 60)).padStart(2,'0');
+  const s = String(secs % 60).padStart(2,'0');
+  const str = `${h}:${m}:${s}`;
+  ['home-timer','hq-timer','mission-timer'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = str;
+  });
+}, 1000);
+
+// Init progress bar on load for HQ
+setTimeout(() => { document.getElementById('hq-prog-bar').style.width = '77%'; }, 150);
+</script>
+</body>
+</html>
